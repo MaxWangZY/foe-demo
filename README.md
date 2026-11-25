@@ -2,6 +2,8 @@
 
 This demo lets you explore how navigation platforms (mediators) interact on the Braess network. For the full study by Zhengyang Wang and Achilleas Anastasopoulos, see **[Fragmented Obedient Equilibria in Routing Games](https://arxiv.org/abs/2610.39225)**.
 
+**[Open the demo](https://maxwangzy.github.io/foe-demo/)**
+
 ## Model preliminaries
 
 The circles are junctions (nodes) and the arrows are one-way roads (edges). One unit of traffic travels from origin $O$ to destination $D$ along three routes.
@@ -24,12 +26,4 @@ The circles are junctions (nodes) and the arrows are one-way roads (edges). One 
 
 Each combination selects a saved scenario. The timeline replays Jacobi updates, where all mediators respond to the previous step’s rival mean flows. Compare with the **social optimum**, which minimizes total travel cost, and **Wardrop equilibrium**, where every used route has minimum cost at the resulting flows.
 
-## Run locally
-
-From this folder, start the static server.
-
-```sh
-python3 -m http.server 8766 --bind 127.0.0.1
-```
-
-[Open the demo](http://127.0.0.1:8766/) · [MIT License](LICENSE)
+[MIT License](LICENSE)
