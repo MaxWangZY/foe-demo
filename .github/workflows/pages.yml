@@ -1,0 +1,50 @@
+name: Publish FOE demo
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - name: Download replay bundle
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >
+          gh release download braess-20261121T062650Z
+          --repo "$GITHUB_REPOSITORY" --pattern replays.zip --dir "$RUNNER_TEMP"
+      - name: Assemble site
+        run: |
+          archive="$RUNNER_TEMP/replays.zip"
+          printf '%s  %s\n' 'ed9a8376c226b0bba0964771998625ffbc951bf0fcd53a8585823ca67a687c79' "$archive" | sha256sum --check
+          replays="dist/replays/braess-20261121T062650Z"
+          mkdir -p "$replays"
+          cp index.html app.js saved-replays.mjs view-model.mjs style.css journal.css LICENSE dist/
+          unzip -q -j "$archive" 'replays/*.json.gz' -d "$replays"
+          test "$(find "$replays" -type f -name '*.json.gz' | wc -l)" -eq 32513
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: dist
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
